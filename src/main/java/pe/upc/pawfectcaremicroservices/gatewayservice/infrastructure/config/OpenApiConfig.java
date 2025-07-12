@@ -29,7 +29,7 @@ public class OpenApiConfig {
                                 .url(System.getenv("GATEWAY_SERVER_URL")) // TODO: Configurar el secreto en Azure y mapearlo a esta variable de entorno
                                 .description("Gateway Server Azure"),
                         new Server()
-                                .url("http://localhost:8010")
+                                .url("https://pawfect-gateway-service.azurewebsites.net")
                                 .description("Gateway Server Local")
                 ));
     }
@@ -63,7 +63,7 @@ public class OpenApiConfig {
             // Asegurar que todas las operaciones usen el servidor del gateway
             openApi.servers(List.of(
                     new Server()
-                            .url("http://localhost:8010")
+                            .url("https://pawfect-gateway-service.azurewebsites.net")
                             .description("Gateway Server")
             ));
         };
