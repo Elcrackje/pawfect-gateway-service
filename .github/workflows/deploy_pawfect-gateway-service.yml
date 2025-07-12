@@ -1,0 +1,64 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - pawfect-gateway-service
+
+on:
+  push:
+    branches:
+      - deploy
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: pawfectcareregistry-hybha2fbbedqcqe0.azurecr.io/
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_759DFB99788348EEA9F29072B9F55B70 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_36FEC3F55AD0415A93578005E8840427 }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: pawfectcareregistry-hybha2fbbedqcqe0.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_759DFB99788348EEA9F29072B9F55B70 }}/pawfect-gateway:${{ github.sha }}
+          file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    needs: build
+    
+
+    steps:
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B4347228F5F047D68CD05AE1B135B11D }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1C042F9267A94F44A575B42E9287C68B }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9C1635BD3BB74222A3653E6E424F1307 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'pawfect-gateway-service'
+          slot-name: 'Production'
+          images: 'pawfectcareregistry-hybha2fbbedqcqe0.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_759DFB99788348EEA9F29072B9F55B70 }}/pawfect-gateway:${{ github.sha }}'
+          
