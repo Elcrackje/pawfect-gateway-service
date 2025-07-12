@@ -6,87 +6,91 @@ spring:
       routes:
         # Pet Owner Service
         - id: pet-owner-service
-          # uri: http://localhost:8094 # estuve probando con esta uri [con esa funcionó primero]
-          uri: lb://pet-owner-service # Con esto ya funciona también
+          uri: https://pawfect-pet-owner-service.azurewebsites.net
           predicates:
             - Path=/pet-owner-service/**
           filters:
             - StripPrefix=1
+
         # Pet Service
         - id: pet-service
-          uri: lb://pet-service
+          uri: https://pawfect-pet-service.azurewebsites.net
           predicates:
             - Path=/pet-service/**
           filters:
             - StripPrefix=1
+
         # Veterinary Service
         - id: veterinary-service
-          uri: lb://veterinary-service
+          uri: https://pawfect-veterinary-service.azurewebsites.net
           predicates:
             - Path=/veterinary-service/**
           filters:
             - StripPrefix=1
+
         # Schedule Service
         - id: schedule-service
-          uri: lb://schedule-service
+          uri: https://pawfect-schedule-service.azurewebsites.net
           predicates:
             - Path=/schedule-service/**
           filters:
             - StripPrefix=1
+
         # Medical Record Service
         - id: medical-record-service
-          uri: lb://medical-record-service
+          uri: https://pawfect-medical-record-service.azurewebsites.net
           predicates:
             - Path=/medical-record-service/**
           filters:
             - StripPrefix=1
+
         # Appointment Service
         - id: appointment-service
-          uri: lb://appointment-service
+          uri: https://pawfect-appointment-service.azurewebsites.net
           predicates:
             - Path=/appointment-service/**
           filters:
             - StripPrefix=1
+
         # Review Service
         - id: review-service
-          uri: lb://review-service
+          uri: https://pawfect-review-service.azurewebsites.net
           predicates:
             - Path=/review-service/**
           filters:
             - StripPrefix=1
-        # Diagnostic Service (antes era Treatment Service)
+
+        # Diagnostic Service
         - id: diagnostic-service
-          uri: lb://diagnostic-service
+          uri: https://pawfect-diagnostic-service.azurewebsites.net
           predicates:
             - Path=/diagnostic-service/**
           filters:
             - StripPrefix=1
-        # IAM Service - SOLO esta ruta para autenticación
+
+        # IAM Service
         - id: iam-service
-          uri: lb://iam-service
+          uri: https://pawfect-iam-service.azurewebsites.net
           predicates:
             - Path=/iam-service/**
           filters:
             - StripPrefix=1
+
         # IAM Service - registro admin
         - id: iam-service-admin-registro
-          uri: lb://iam-service
+          uri: https://pawfect-iam-service.azurewebsites.net
           predicates:
             - Path=/api/v1/users_admin/registro
           filters:
             - StripPrefix=0
 
-
 server:
   port: 8010
+
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_URL:http://registry-service:8090/eureka/}
-      logging:
-        level:
-          org.springframework.security: DEBUG
-          org.springframework.security.web.FilterChainProxy: DEBUG
+      defaultZone: ${EUREKA_URL:https://pawfect-registry-service.azurewebsites.net/eureka/}
 
 springdoc:
   api-docs:
@@ -94,33 +98,28 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    # Configuración para usar el gateway como servidor base
     config-url: /v3/api-docs/swagger-config
     urls:
-      # Pet Owner Service
       - name: Pet Owner Service
         url: /pet-owner-service/v3/api-docs
-      # Pet Service
       - name: Pet Service
         url: /pet-service/v3/api-docs
-      # Veterinary Service
       - name: Veterinary Service
         url: /veterinary-service/v3/api-docs
-      # IAM Service
       - name: IAM Service
         url: /iam-service/v3/api-docs
-      # Medical Record Service
       - name: Medical Record Service
         url: /medical-record-service/v3/api-docs
-      # Appointment Service
       - name: Appointment Service
         url: /appointment-service/v3/api-docs
-      # Review Service
       - name: Review Service
         url: /review-service/v3/api-docs
-      # Diagnostic Service
       - name: Diagnostic Service
         url: /diagnostic-service/v3/api-docs
-      # Schedule Service
       - name: Schedule Service
         url: /schedule-service/v3/api-docs
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
