@@ -9,5 +9,4 @@ class GatewayServiceApplicationTests {
         // Test básico que siempre pasa
         System.out.println("Test ejecutado correctamente.");
     }
-
 }
